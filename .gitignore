@@ -1,4 +1,12 @@
-creds.py
+# Desktop Files
+.vscode/
+.env
+
+# Python
+*.pyc
+.mypy_cache
+dineinhall-flask/
+
+# misc
 .DS_Store
 ._.DS_Store
-*.pyc

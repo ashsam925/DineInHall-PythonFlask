@@ -1,21 +1,18 @@
-from flask import render_template, Blueprint, redirect, url_for, flash
-from sqlalchemy import create_engine
 from datetime import datetime
-from pytz import timezone
-from dineinhall.models import Rating
+from flask import render_template, Blueprint, redirect, url_for, flash
 from flask_login import current_user, login_required
+from pytz import timezone
+from sqlalchemy import create_engine
+
 from .forms import ReviewForm
 from dineinhall import db
-import os
-try:
-    SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]  # URI from Heroku
-except Exception:
-    from ..creds import SQLALCHEMY_DATABASE_URI  # local URI
+from dineinhall.config import Config
+from dineinhall.models import Rating
 
 review = Blueprint('review', __name__)
 
 # allows us to recreate SQL query statements in Python
-engine = create_engine(SQLALCHEMY_DATABASE_URI)
+engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
 
 
 # page where user creates a new review (must be logged in)
@@ -60,7 +57,7 @@ def foodReview(food_id):
         reviews = con.execute("select * "
                               f"from food join rating using (food_id) "
                               f"join user using (user_id) "
-                              f"where not isnull(description) and {food_id} "
+                              f"where not isnull(rating.description) and {food_id} "
                               f"order by timestamp desc")
     reviews = list(reviews)
     size = len(reviews)
